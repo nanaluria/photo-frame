@@ -1,0 +1,131 @@
+---
+---
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Nanamine Photo Clock</title>
+  <meta name="description" content="ファンアートをランダム表示するフォトフレーム兼時計です。" />
+  <meta name="theme-color" content="#16131f" />
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="mode-landscape">
+  <script type="application/json" id="fanart-data">
+    [
+      {% assign fanart_exts = ".jpg,.jpeg,.png,.webp,.gif,.svg" | split: "," %}
+      {% assign fanart_files = site.static_files | sort: "path" %}
+      {% assign comma = false %}
+      {% for file in fanart_files %}
+        {% assign ext = file.extname | downcase %}
+        {% assign is_fanart = false %}
+        {% if file.path contains "/assets/fanart/" %}
+          {% if fanart_exts contains ext %}
+            {% assign is_fanart = true %}
+          {% endif %}
+        {% endif %}
+        {% if is_fanart %}
+          {% assign parts = file.basename | split: "__" %}
+          {% assign raw_date = parts[0] | default: "" %}
+          {% assign raw_artist = parts[1] | default: "作者不明" %}
+          {% assign link_type = parts[2] | default: "nolink" | downcase %}
+          {% assign raw_title = "ファンアート" %}
+          {% assign link_url = "" %}
+
+          {% case link_type %}
+            {% when "xpost" %}
+              {% assign x_user = parts[3] | default: "" | remove_first: "@" %}
+              {% assign x_post_id = parts[4] | default: "" %}
+              {% assign raw_title = parts[5] | default: "ファンアート" %}
+              {% if x_user != "" and x_post_id != "" %}
+                {% assign link_url = "https://x.com/" | append: x_user | append: "/status/" | append: x_post_id %}
+              {% endif %}
+            {% when "pixivart" %}
+              {% assign pixiv_artwork_id = parts[3] | default: "" %}
+              {% assign raw_title = parts[4] | default: "ファンアート" %}
+              {% if pixiv_artwork_id != "" %}
+                {% assign link_url = "https://www.pixiv.net/artworks/" | append: pixiv_artwork_id %}
+              {% endif %}
+            {% when "bskypost" %}
+              {% assign bsky_handle = parts[3] | default: "" %}
+              {% assign bsky_post_id = parts[4] | default: "" %}
+              {% assign raw_title = parts[5] | default: "ファンアート" %}
+              {% if bsky_handle != "" and bsky_post_id != "" %}
+                {% assign link_url = "https://bsky.app/profile/" | append: bsky_handle | append: "/post/" | append: bsky_post_id %}
+              {% endif %}
+            {% when "threads" %}
+              {% assign threads_user = parts[3] | default: "" | remove_first: "@" %}
+              {% assign threads_post_id = parts[4] | default: "" %}
+              {% assign raw_title = parts[5] | default: "ファンアート" %}
+              {% if threads_user != "" and threads_post_id != "" %}
+                {% assign link_url = "https://www.threads.net/@" | append: threads_user | append: "/post/" | append: threads_post_id %}
+              {% endif %}
+            {% when "nolink" %}
+              {% assign raw_title = parts[3] | default: "ファンアート" %}
+            {% when "none" %}
+              {% assign raw_title = parts[3] | default: "ファンアート" %}
+            {% when "private" %}
+              {% assign raw_title = parts[3] | default: "ファンアート" %}
+            {% when "deleted" %}
+              {% assign raw_title = parts[3] | default: "ファンアート" %}
+            {% else %}
+              {% assign raw_title = parts[2] | default: "ファンアート" %}
+          {% endcase %}
+
+          {% assign display_date = raw_date | replace: "-", "." %}
+          {% assign display_artist = raw_artist | replace: "-", " " | replace: "_", " " %}
+          {% assign display_title = raw_title | replace: "-", " " | replace: "_", " " %}
+          {% if comma %},{% endif %}
+          {
+            "src": {{ file.path | relative_url | jsonify }},
+            "artist": {{ display_artist | jsonify }},
+            "date": {{ display_date | jsonify }},
+            "title": {{ display_title | jsonify }},
+            "alt": {{ display_artist | append: "さんのファンアート" | jsonify }},
+            "url": {{ link_url | jsonify }}
+          }
+          {% assign comma = true %}
+        {% endif %}
+      {% endfor %}
+    ]
+  </script>
+
+  <main class="stage" aria-label="ファンアート時計">
+    <div class="wallpaper" data-wallpaper aria-hidden="true"></div>
+
+    <section class="photo-shell" data-photo-shell>
+      <button class="photo-click-layer" data-art-link type="button" aria-label="イラストの投稿を開く"></button>
+      <img class="photo" data-photo src="" alt="" />
+
+      <div class="clock-panel" aria-live="polite">
+        <p class="date" data-date>----</p>
+        <p class="time" data-time>--:--</p>
+      </div>
+
+      <div class="art-panel">
+        <p class="art-title" data-art-title>Fan Art</p>
+        <p class="art-meta">
+          <a class="artist" data-artist-link href="#" target="_blank" rel="noopener noreferrer">
+            <span data-artist>Artist</span>
+          </a>
+          <span class="artist no-link" data-artist-text>Artist</span>
+          <span class="dot" aria-hidden="true">·</span>
+          <span data-art-date>----</span>
+        </p>
+      </div>
+    </section>
+
+    <div class="edge-controls" aria-label="表示操作">
+      <button type="button" class="icon-button" data-mode-toggle aria-label="縦長表示に切り替え" title="縦長/横長を切り替え">
+        <span data-mode-icon aria-hidden="true">▯</span>
+      </button>
+      <button type="button" class="icon-button" data-next aria-label="次のイラスト" title="次のイラスト">
+        <span aria-hidden="true">↻</span>
+      </button>
+    </div>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>

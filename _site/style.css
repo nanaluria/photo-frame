@@ -1,0 +1,327 @@
+:root {
+  --bg: #16131f;
+  --text: #ffffff;
+  --muted: rgba(255, 255, 255, 0.76);
+  --panel: rgba(12, 10, 18, 0.42);
+  --panel-strong: rgba(12, 10, 18, 0.62);
+  --border: rgba(255, 255, 255, 0.22);
+  --shadow: 0 28px 80px rgba(0, 0, 0, 0.42);
+  --radius: 28px;
+  --font: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  overflow: hidden;
+  min-height: 100svh;
+  min-height: 100dvh;
+}
+
+button,
+a {
+  font: inherit;
+}
+
+button {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.stage {
+  position: relative;
+  width: 100vw;
+  height: 100svh;
+  height: 100dvh;
+  min-height: 100svh;
+  min-height: 100dvh;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.wallpaper {
+  position: fixed;
+  inset: -36px;
+  z-index: -2;
+  background-position: center;
+  background-size: cover;
+  filter: blur(26px) saturate(1.08) brightness(0.68);
+  transform: scale(1.08);
+  transition: opacity 520ms ease, background-image 0s linear 260ms;
+}
+
+.stage::before,
+.stage::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+}
+
+.stage::before {
+  z-index: -1;
+  background:
+    radial-gradient(circle at 18% 12%, rgba(255, 120, 183, 0.12), transparent 34%),
+    radial-gradient(circle at 82% 20%, rgba(141, 124, 255, 0.14), transparent 36%),
+    linear-gradient(180deg, rgba(0, 0, 0, 0.06), rgba(0, 0, 0, 0.2));
+}
+
+.stage::after {
+  z-index: 2;
+  background:
+    linear-gradient(180deg, rgba(0, 0, 0, 0.34), transparent 28%, transparent 58%, rgba(0, 0, 0, 0.42)),
+    linear-gradient(90deg, rgba(0, 0, 0, 0.24), transparent 28%, transparent 70%, rgba(0, 0, 0, 0.22));
+}
+
+.photo-shell {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100svh;
+  height: 100dvh;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.04);
+  transition: opacity 360ms ease, transform 360ms ease;
+}
+
+.photo-shell.is-changing {
+  opacity: 0.42;
+  transform: scale(1.008);
+}
+
+.photo {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  display: block;
+  width: max(100vw, calc(100dvh * 16 / 9));
+  height: max(100dvh, calc(100vw * 9 / 16));
+  object-fit: cover;
+  object-position: center center;
+  transform: translate(-50%, -50%);
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.mode-portrait .photo {
+  width: max(100vw, calc(100dvh * 9 / 16));
+  height: max(100dvh, calc(100vw * 16 / 9));
+}
+
+.photo-click-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: block;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.photo-click-layer[disabled] {
+  cursor: default;
+}
+
+.clock-panel,
+.art-panel,
+.edge-controls .icon-button {
+  border: 1px solid var(--border);
+  background: var(--panel);
+  box-shadow: 0 16px 42px rgba(0, 0, 0, 0.22);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.clock-panel {
+  position: absolute;
+  left: max(14px, env(safe-area-inset-left));
+  top: max(14px, env(safe-area-inset-top));
+  z-index: 5;
+  min-width: min(52%, 480px);
+  padding: clamp(14px, 2.5vw, 26px) clamp(16px, 3vw, 30px);
+  border-radius: calc(var(--radius) - 8px);
+}
+
+.date,
+.time,
+.art-title,
+.art-meta {
+  margin: 0;
+}
+
+.date {
+  color: var(--muted);
+  font-size: clamp(0.82rem, 1.8vw, 1.08rem);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.time {
+  margin-top: 2px;
+  font-variant-numeric: tabular-nums;
+  font-size: clamp(3.2rem, 10vw, 7.4rem);
+  font-weight: 850;
+  letter-spacing: -0.06em;
+  line-height: 0.96;
+  text-shadow: 0 8px 30px rgba(0, 0, 0, 0.26);
+}
+
+.art-panel {
+  position: absolute;
+  right: max(14px, env(safe-area-inset-right));
+  bottom: max(14px, env(safe-area-inset-bottom));
+  z-index: 5;
+  max-width: min(72%, 620px);
+  padding: 14px 17px;
+  border-radius: 22px;
+  background: var(--panel-strong);
+}
+
+.art-title {
+  color: rgba(255, 255, 255, 0.92);
+  font-size: clamp(0.84rem, 1.5vw, 1rem);
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+
+.art-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: clamp(0.78rem, 1.4vw, 0.94rem);
+  line-height: 1.35;
+}
+
+.artist {
+  color: inherit;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.artist:hover,
+.artist:focus-visible {
+  text-decoration: underline;
+}
+
+.artist.no-link {
+  display: none;
+}
+
+.art-panel.no-url .artist[data-artist-link] {
+  display: none;
+}
+
+.art-panel.no-url .artist.no-link {
+  display: inline;
+}
+
+.dot {
+  opacity: 0.6;
+}
+
+.edge-controls {
+  position: absolute;
+  right: max(12px, env(safe-area-inset-right));
+  top: max(12px, env(safe-area-inset-top));
+  z-index: 10;
+  display: grid;
+  gap: 10px;
+}
+
+.icon-button {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 999px;
+  color: white;
+  cursor: pointer;
+  transition: background 160ms ease, transform 160ms ease, opacity 160ms ease;
+}
+
+.icon-button:hover,
+.icon-button:focus-visible {
+  outline: none;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.icon-button:active {
+  transform: scale(0.95);
+}
+
+.icon-button span {
+  display: block;
+  font-size: 1.42rem;
+  font-weight: 850;
+  line-height: 1;
+}
+
+.icon-button[data-mode-toggle] span {
+  font-size: 1.62rem;
+}
+
+.mode-portrait .icon-button[data-mode-toggle] {
+  background: rgba(255, 255, 255, 0.18);
+}
+
+@media (max-width: 700px) {
+  .clock-panel {
+    left: max(10px, env(safe-area-inset-left));
+    top: max(10px, env(safe-area-inset-top));
+    min-width: auto;
+    max-width: calc(100% - 82px - env(safe-area-inset-left) - env(safe-area-inset-right));
+    padding: 12px 14px;
+    border-radius: 18px;
+  }
+
+  .date {
+    font-size: 0.78rem;
+  }
+
+  .time {
+    font-size: clamp(2.8rem, 16vw, 5.2rem);
+  }
+
+  .art-panel {
+    left: max(10px, env(safe-area-inset-left));
+    right: max(10px, env(safe-area-inset-right));
+    bottom: max(10px, env(safe-area-inset-bottom));
+    max-width: none;
+    padding: 11px 13px;
+    border-radius: 18px;
+  }
+
+  .edge-controls {
+    right: max(10px, env(safe-area-inset-right));
+    top: max(10px, env(safe-area-inset-top));
+    gap: 8px;
+  }
+
+  .icon-button {
+    width: 42px;
+    height: 42px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition: none !important;
+  }
+}

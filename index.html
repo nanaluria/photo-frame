@@ -40,12 +40,17 @@
               {% assign raw_title = parts[5] | default: "ファンアート" %}
               {% if x_user != "" and x_post_id != "" %}
                 {% assign link_url = "https://x.com/" | append: x_user | append: "/status/" | append: x_post_id %}
+                {% assign artist_url = "https://x.com/" | append: x_user %}
               {% endif %}
             {% when "pixivart" %}
-              {% assign pixiv_artwork_id = parts[3] | default: "" %}
-              {% assign raw_title = parts[4] | default: "ファンアート" %}
+              {% assign pixiv_user_id = parts[3] | default: "" %}
+              {% assign pixiv_artwork_id = parts[4] | default: "" %}
+              {% assign raw_title = parts[5] | default: "ファンアート" %}
               {% if pixiv_artwork_id != "" %}
                 {% assign link_url = "https://www.pixiv.net/artworks/" | append: pixiv_artwork_id %}
+              {% endif %}
+              {% if pixiv_user_id != "" %}
+                {% assign artist_url = "https://www.pixiv.net/users/" | append: pixiv_user_id %}
               {% endif %}
             {% when "bskypost" %}
               {% assign bsky_handle = parts[3] | default: "" %}
@@ -53,6 +58,7 @@
               {% assign raw_title = parts[5] | default: "ファンアート" %}
               {% if bsky_handle != "" and bsky_post_id != "" %}
                 {% assign link_url = "https://bsky.app/profile/" | append: bsky_handle | append: "/post/" | append: bsky_post_id %}
+                {% assign artist_url = "https://bsky.app/profile/" | append: bsky_handle %}
               {% endif %}
             {% when "threads" %}
               {% assign threads_user = parts[3] | default: "" | remove_first: "@" %}
@@ -60,6 +66,7 @@
               {% assign raw_title = parts[5] | default: "ファンアート" %}
               {% if threads_user != "" and threads_post_id != "" %}
                 {% assign link_url = "https://www.threads.net/@" | append: threads_user | append: "/post/" | append: threads_post_id %}
+                {% assign artist_url = "https://www.threads.net/@" | append: threads_user %}
               {% endif %}
             {% when "nolink" %}
               {% assign raw_title = parts[3] | default: "ファンアート" %}
@@ -83,7 +90,8 @@
             "date": {{ display_date | jsonify }},
             "title": {{ display_title | jsonify }},
             "alt": {{ display_artist | append: "さんのファンアート" | jsonify }},
-            "url": {{ link_url | jsonify }}
+            "url": {{ link_url | jsonify }},
+            "artistUrl": {{ artist_url | jsonify }}
           }
           {% assign comma = true %}
         {% endif %}

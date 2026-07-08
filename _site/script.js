@@ -93,11 +93,9 @@ function renderArt(index = getRandomIndex()) {
     photo.alt = normalizeText(currentArt.alt, 'ファンアート');
     wallpaper.style.backgroundImage = `url("${src}")`;
 
-    const title = normalizeText(currentArt.title, 'Fan Art');
     const artist = normalizeText(currentArt.artist, '作者不明');
     const date = normalizeText(currentArt.date, '----');
 
-    if (artTitle) artTitle.textContent = title;
     if (artistName) artistName.textContent = artist;
     if (artistText) artistText.textContent = artist;
     if (artDate) artDate.textContent = date;
@@ -105,11 +103,21 @@ function renderArt(index = getRandomIndex()) {
     if (currentArt.url) {
       artPanel?.classList.remove('no-url');
       artLinkButton?.removeAttribute('disabled');
-      if (artistLink) artistLink.href = currentArt.url;
     } else {
       artPanel?.classList.add('no-url');
       artLinkButton?.setAttribute('disabled', '');
-      if (artistLink) artistLink.removeAttribute('href');
+    }
+
+    // アーティスト名リンク処理：投稿URLと artistUrl 両方ある場合のみリンク表示
+    if (currentArt.url && currentArt.artistUrl) {
+      if (artistLink) {
+        artistLink.href = currentArt.artistUrl;
+        artistLink.style.display = '';
+      }
+      if (artistText) artistText.style.display = 'none';
+    } else {
+      if (artistLink) artistLink.style.display = 'none';
+      if (artistText) artistText.style.display = '';
     }
 
     setTimeout(() => photoShell?.classList.remove('is-changing'), 120);
@@ -119,7 +127,7 @@ function renderArt(index = getRandomIndex()) {
 
 function updateClock() {
   const now = new Date();
-  const dateFormatter = new Intl.DateTimeFormat('ja-JP', {
+  const dateFormatter = new Intl.DateTimeFormat('en-US', {
     year: 'numeric',
     month: 'long',
     day: 'numeric',

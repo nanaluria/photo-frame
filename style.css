@@ -108,7 +108,7 @@ button {
   display: block;
   width: max(100vw, calc(100dvh * 16 / 9));
   height: max(100dvh, calc(100vw * 9 / 16));
-  object-fit: cover;
+  object-fit: contain;
   object-position: center center;
   transform: translate(-50%, -50%);
   user-select: none;
@@ -149,7 +149,8 @@ button {
   left: max(14px, env(safe-area-inset-left));
   top: max(14px, env(safe-area-inset-top));
   z-index: 5;
-  min-width: min(52%, 480px);
+  width: fit-content;
+  max-width: clamp(180px, 50vw, 480px);
   padding: clamp(14px, 2.5vw, 26px) clamp(16px, 3vw, 30px);
   border-radius: calc(var(--radius) - 8px);
 }
@@ -184,16 +185,13 @@ button {
   bottom: max(14px, env(safe-area-inset-bottom));
   z-index: 5;
   max-width: min(72%, 620px);
-  padding: 14px 17px;
+  padding: 10px 13px;
   border-radius: 22px;
   background: var(--panel-strong);
 }
 
 .art-title {
-  color: rgba(255, 255, 255, 0.92);
-  font-size: clamp(0.84rem, 1.5vw, 1rem);
-  font-weight: 800;
-  letter-spacing: 0.04em;
+  display: none;
 }
 
 .art-meta {
@@ -201,7 +199,7 @@ button {
   flex-wrap: wrap;
   align-items: center;
   gap: 6px;
-  margin-top: 4px;
+  margin-top: 2px;
   color: var(--muted);
   font-size: clamp(0.78rem, 1.4vw, 0.94rem);
   line-height: 1.35;
@@ -277,6 +275,17 @@ button {
 
 .mode-portrait .icon-button[data-mode-toggle] {
   background: rgba(255, 255, 255, 0.18);
+}
+
+/* スマホ横向き時の時計枠サイズ調整 */
+@media (max-height: 600px) and (orientation: landscape) {
+  .clock-panel {
+    max-width: clamp(140px, 40vw, 320px);
+  }
+
+  .time {
+    font-size: clamp(2.2rem, 6vw, 4.2rem);
+  }
 }
 
 @media (max-width: 700px) {

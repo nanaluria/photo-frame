@@ -307,10 +307,11 @@ button {
   }
 
   .art-panel {
-    left: max(10px, env(safe-area-inset-left));
+    left: auto;
     right: max(10px, env(safe-area-inset-right));
     bottom: max(10px, env(safe-area-inset-bottom));
-    max-width: none;
+    width: fit-content;
+    max-width: min(90vw, 520px);
     padding: 11px 13px;
     border-radius: 18px;
   }
